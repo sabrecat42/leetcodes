@@ -8,6 +8,7 @@
 
  # include <stdio.h>
  # include <stdlib.h>
+ # include <stdbool.h>
 
 //  Definition for singly-linked list.
 struct ListNode {
@@ -15,8 +16,8 @@ struct ListNode {
     struct ListNode *next;
 };
 
-int pos_pow(int a, int b) {
-    int res = 1;
+unsigned long long int pos_pow(int a, int b) {
+    unsigned long long int res = 1;
     while (b>0) {
         res = res * a;
         b--;
@@ -24,8 +25,8 @@ int pos_pow(int a, int b) {
     return res;
 }
 
-int computeInt(struct ListNode* l) {
-    int res = 0;
+unsigned long long int computeInt(struct ListNode* l) {
+    unsigned long long int res = 0;
     int dec_pos=0;
     do {
         res += l->val * pos_pow(10,dec_pos);
@@ -35,9 +36,18 @@ int computeInt(struct ListNode* l) {
     return res;
 }
 
-struct ListNode* makeLinkedList(int number) {
-    int modulo = 10;
-    int div = 1;
+void printListInt(struct ListNode* l) {
+    while (l)
+    {
+        printf("%d",l->val);
+        l = l->next;
+    }
+    printf("\n");
+}
+
+struct ListNode* makeLinkedList(unsigned long long int number) {
+    unsigned long long int modulo = 10;
+    unsigned long long int div = 1;
     
     int is_head = 1;
     struct ListNode* list = NULL;
@@ -49,8 +59,8 @@ struct ListNode* makeLinkedList(int number) {
         head->next=NULL;
     }
     while (number / div != 0) {
-        int val = (number % modulo) / div;
-        printf("val=%d\n",val);
+        unsigned long long int val = (number % modulo) / div;
+        printf("val=%llu\n",val);
 
         list = malloc(sizeof(struct ListNode));
         if (is_head) head = list;
@@ -67,16 +77,62 @@ struct ListNode* makeLinkedList(int number) {
     return head;
 }
 
+// struct ListCarry {
+//     struct ListNode* tail;
+//     int carry;
+// }
+
+struct ListNode* addWithCarry(struct ListNode* l1, struct ListNode* l2, struct ListNode* tail, bool got_carry) {
+    // printf("adding %d with %d with carry?=%d\n", l1->val, l2->val, got_carry);
+
+    struct ListNode* node = malloc(sizeof(struct ListNode));
+    
+    if (!l1 && !l2) {
+        if (got_carry) {
+            node->val=1;
+            node->next=tail;
+            return node;
+        }
+        return tail;
+    } else if (!l1) {
+        // node->val=l2->val;
+        // node->next=l2;
+        return l2;
+    } else if (!l2) {
+        // node->val=l1->val;
+        // node->next=l1;
+        return l1;
+    }
+
+    int sum = (l1->val + l2->val);
+    if (got_carry) sum++;
+    bool send_carry = sum/10;
+    node->val = sum % 10;
+    node->next = addWithCarry(l1->next, l2->next, node, send_carry);
+    return node;
+}
+
+void addTail(struct ListNode* l1, struct ListNode* l2) {
+    while (l1->next) {
+        l1 = l1->next;
+    }
+    l1->next = l2;
+}
+
 struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
-    int int1 = computeInt(l1);
-    int int2 = computeInt(l2);
-    printf("%d + %d = %d\n",int1, int2, int1+int2);
-    return makeLinkedList(int1+int2);
+    return addWithCarry(l1, l2, NULL, false);
 }
 
 int main() {
-    struct ListNode* res_list = addTwoNumbers(makeLinkedList(942),makeLinkedList(9465));
-    // printf("%d",res_list->val);
+    struct ListNode* l1 = makeLinkedList(10000000000001);
+    addTail(l1, makeLinkedList(10000000000001));   
+    struct ListNode* l2 = makeLinkedList(465);
+    printListInt(l1); 
+    printListInt(l2); 
+    struct ListNode* res_list = addTwoNumbers(l1,l2);
+
+    printListInt(res_list);
+    // printf("%llu", computeInt(res_list));
 }
 
 // /**
