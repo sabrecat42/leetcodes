@@ -6,8 +6,7 @@
  * };
  */
 
-//  # include <stdio.h>
-//  # include <math.h>
+ # include <stdio.h>
  # include <stdlib.h>
 
 //  Definition for singly-linked list.
@@ -25,23 +24,14 @@ int pos_pow(int a, int b) {
     return res;
 }
 
-int computeListLength(struct ListNode* l) {
-    int len = 0;
-    struct ListNode* ll = l;
-    while (ll->next) {
-        len++;
-        ll = ll->next;
-    }
-    return len;
-}
-
-int computeInt(struct ListNode* l, int len) {
+int computeInt(struct ListNode* l) {
     int res = 0;
-    struct ListNode* ll = l;
-    for (int i=len; i>=0; i--) {
-        res += (ll->val) * pos_pow(10,i);
-        ll = ll->next;
-    }
+    int dec_pos=0;
+    do {
+        res += l->val * pos_pow(10,dec_pos);
+        l=l->next;
+        dec_pos++;
+    } while (l);
     return res;
 }
 
@@ -78,20 +68,15 @@ struct ListNode* makeLinkedList(int number) {
 }
 
 struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
-    int len1 = computeListLength(l1);
-    // printf("len1=%d\n",len1);
-    int len2 = computeListLength(l2);
-    // printf("len2=%d\n",len2);
-    int int1 = computeInt(l1, len1);
-    // printf("int1=%d\n",int1);
-    int int2 = computeInt(l2, len2);
-    // printf("int2=%d\n",int2);
-    // printf("%d", int1 + int2);
+    int int1 = computeInt(l1);
+    int int2 = computeInt(l2);
+    printf("%d + %d = %d\n",int1, int2, int1+int2);
     return makeLinkedList(int1+int2);
 }
 
 int main() {
-    addTwoNumbers(makeLinkedList(997990900),makeLinkedList(989982099));
+    struct ListNode* res_list = addTwoNumbers(makeLinkedList(942),makeLinkedList(9465));
+    // printf("%d",res_list->val);
 }
 
 // /**
