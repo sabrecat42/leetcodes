@@ -6,17 +6,16 @@
 char* convert(char* s, int numRows) {
     int s_len = strlen(s);
     if (s_len==1 || numRows==1) return s;
+    int* row_lens = malloc(sizeof(int)*numRows);
+    char* res = malloc(s_len+1);
+    res[s_len] = '\0';
 
     // first assume only full cols
     int col_size = (numRows*2)-2;
     int full_cols = strlen(s) / col_size;
     int half_cols = strlen(s) % col_size;
-
-
     // printf("%d\n",col_size);
     // printf("%d\n",full_cols);
-
-    int* row_lens = malloc(sizeof(int)*numRows);
 
     for (int i = 0; i < numRows; i++) {
         if (i==0) {
@@ -44,9 +43,6 @@ char* convert(char* s, int numRows) {
     //     printf("row %d has %d\n",i ,row_lens[i]);
     // }
 
-    char* res = malloc(s_len+1);
-    res[s_len] = '\0';
-
     int s_idx=0;
     int r_idx=0;
     for (int i = 0; i < numRows; i++) {
@@ -64,7 +60,6 @@ char* convert(char* s, int numRows) {
             }
             // printf("i=%d; j=%d; r_idx=%d; s[%d]=%c\n",i,j,r_idx,s_idx,s[s_idx]);
             res[s_idx] = s[r_idx];
-            // last:
             s_idx++;
         }
     }
@@ -112,75 +107,3 @@ int main () {
     printf("res = %s\n", r);
     free(r);
 }
-
-// char = s[full_colls + (full_cols * 2 * j) + 2*i]
-
-// P    I    N
-// A  L S  I G  E
-// Y A  H R  N N
-// P    I    O
-
-// 0      1     2
-// 3   4  5  6  7   8
-// 9 10  11 12 13 14
-// 15    16    17
-
-// 0      1     2
-// 3   4  5   6 7
-// 8 9   10 11
-// 12    13
-
-// 0      6      12
-// 1   5  7   11 13
-// 2 4    8 10
-// 3      9
-
-// rows[i]  = row_i_len
-// full_cols
-// last_col
-
-// for i=range(len(rows)):
-    // for j=range(rows[i]):
-        // if row==0:
-            // res[i+] = s[i*len(rows[])]
-
-
-
-
-
-// i -> col
-// j -> pos_in_col
-    // if j==0:
-        // p[i*n_rows+j] = i
-    // else if (j>0&&j<n_rows-1):
-        // p[i*n_rows+j] = s[n_cols + j*(2*n_cols) + i*2];      // count top row with single char + rows above with 2 chars + chars to left
-    // else if (j=n_rows-1):
-        // p[i*n_rows+j]= s[n_cols + j*(2*n_cols) + i];
-    // else if (j>=n_rows&&j<col_size):
-        // p[i*n_rows+j]= s[n_cols + 2*(j-(n_rows-1))*(2*n_cols) + i]
-        // 
-
-
-
-
-
-
-//  p -> idx = 0
-//  I -> idx += r_len * i + (r_len-2)*i = 0+ 4*1 + 2*1 = 6
-//  N -> 4*2 + 2*2 = 12
-// idx = idx + 
-//  A -> 
-
-// col_size = r_len*2-2
-// full_cols = len(s)/(col_size)
-// for i=range(full_cols):
-//  for j=range(col_size):
-    // if j == 0:
-        // idx = i * col_size 
-    // else if j > 0: 
-        // if (i>0):
-            // idx = (full_cols + i*2)
-        // idx = full_cols * j
-    //  res_str[i*col_size+j] = 
-
-
