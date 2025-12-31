@@ -4,12 +4,17 @@
 
 
 char* convert(char* s, int numRows) {
+    int s_len = strlen(s);
+    if (s_len==1 || numRows==1) return s;
+
     // first assume only full cols
     int col_size = (numRows*2)-2;
     int full_cols = strlen(s) / col_size;
     int half_cols = strlen(s) % col_size;
-    printf("%d\n",col_size);
-    printf("%d\n",full_cols);
+
+
+    // printf("%d\n",col_size);
+    // printf("%d\n",full_cols);
 
     int* row_lens = malloc(sizeof(int)*numRows);
 
@@ -23,23 +28,22 @@ char* convert(char* s, int numRows) {
                 row_lens[i]++;
             }
             if (half_cols>(col_size-i)) {
-                printf("added extra full col for row %d\n", i);
+                // printf("added extra full col for row %d\n", i);
                 row_lens[i]++;
             }
         } else if (i==numRows-1) {
             row_lens[numRows-1] = full_cols;
             if (half_cols>i) row_lens[numRows-1]++;
         } else {
-            fprintf(stderr, "ERROR: invalid row_lens state\n");
+            // fprintf(stderr, "ERROR: invalid row_lens state\n");
         }
     }
-    printf("row_lens:\n");
-    for (int i = 0; i < numRows; i++)
-    {
-        printf("row %d has %d\n",i ,row_lens[i]);
-    }
+    // printf("row_lens:\n");
+    // for (int i = 0; i < numRows; i++)
+    // {
+    //     printf("row %d has %d\n",i ,row_lens[i]);
+    // }
 
-    int s_len = strlen(s);
     char* res = malloc(s_len+1);
     res[s_len] = '\0';
 
@@ -58,13 +62,13 @@ char* convert(char* s, int numRows) {
             } else if (i==numRows-1) {
                 r_idx = i + col_size*j;
             }
-            printf("i=%d; j=%d; r_idx=%d; s[%d]=%c\n",i,j,r_idx,s_idx,s[s_idx]);
+            // printf("i=%d; j=%d; r_idx=%d; s[%d]=%c\n",i,j,r_idx,s_idx,s[s_idx]);
             res[s_idx] = s[r_idx];
             // last:
             s_idx++;
         }
     }
-
+    free(row_lens);
     // for (int i = 0; i < full_cols+1; i++) {
     //     for (int j = 0; j < col_size; j++) {
     //         int out_s_idx = i*numRows+j;
@@ -106,6 +110,7 @@ int main () {
     char *s = "PAYPALISHIRINGNO";
     char *r = convert(s, 5);
     printf("res = %s\n", r);
+    free(r);
 }
 
 // char = s[full_colls + (full_cols * 2 * j) + 2*i]
