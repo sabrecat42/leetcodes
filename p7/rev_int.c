@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int pow_int(int a, int b) {
+unsigned int pow_int(int a, int b) {
     // if (b==0) return 1;
     int res = 1;
     while (b>0) {
@@ -16,10 +16,11 @@ int reverse(int x){
     if (x==0) return 0;
     int is_signed = (x<0);
     printf("is_signed=%d\n",is_signed);
-    if (is_signed) x = -x;
+    unsigned int u_x = x;
+    if (is_signed) u_x = -u_x;
 
-    int res = 0;
-    int div = x;
+    unsigned int res = 0;
+    unsigned int div = u_x;
     int digits = 0;
     do {
         div = div / 10;
@@ -30,11 +31,12 @@ int reverse(int x){
 
     for (int i = digits-1; i>=0; i--) {
         printf("digit_i=%d\n",i);
-        if (((x / pow_int(10,i)) % 10) * pow_int(10,(digits-(i+1))) > INT32_MAX) return 0;
-        int to_add = ((x / pow_int(10,i)) % 10) * pow_int(10,(digits-(i+1)));
-        if (!is_signed && (res + to_add)<0) {printf("x out of range MAX\n"); return 0; }
-        if (is_signed && -(res + to_add) > 0) {printf("x out of range MIN\n"); return 0; }
-        res += ((x / pow_int(10,i)) % 10) * pow_int(10,(digits-(i+1)));
+        if (((digits-(i+1))>=9) && ((u_x / pow_int(10,i)) % 10)>4) return 0;
+        int to_add = ((u_x / pow_int(10,i)) % 10) * pow_int(10,(digits-(i+1)));
+        if (to_add > INT32_MAX) return 0;
+        if (!is_signed && (res + to_add)>INT32_MAX) {printf("x out of range MAX\n"); return 0; }
+        if (is_signed && (res + to_add)>=INT32_MAX) {printf("x out of range MIN\n"); return 0; }
+        res += to_add;
         // printf("pow_int(10,i) mod 10)=%d\n",);
         // x -= (x % pow_int(10,i)) * (pow_int(10,digits-1));
         printf("res=%d\n",res);
@@ -49,7 +51,8 @@ int main() {
     // int res = reverse(-12347899);
     // int res = reverse(1232123123);
     // int res = reverse(2147483647);
-    int res = reverse(1534236469);
+    // int res = reverse(1534236469);
+    int res = reverse(-2147483648);
     printf("res=%d",res);
 
 }
