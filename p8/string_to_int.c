@@ -1,24 +1,9 @@
-#include <stdio.h>
+// #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-// #define PRINT_STATE() do {                                  \
-//     printf("is_number=%d\n", is_number);                   \
-//     printf("is_signed=%d\n", is_signed);                   \
-//     printf("is_leading=%d\n", leading_zero);               \
-//     printf("digits=%d\n", digits);                         \
-//     printf("res=%d\n\n", get_num_from_ll(ll, digits));     \
-// } while (0)
-
-#define PRINT_STATE() do {                                  \
-    printf("is_number=%d\n", is_number);                   \
-    printf("is_signed=%d\n", is_signed);                   \
-    printf("is_leading=%d\n", leading_zero);               \
-    printf("digits=%d\n", digits);                         \
-} while (0)
-
 typedef struct linkedList {
-    int val;
+    short val;
     struct linkedList* next;
 } linkedList;
 
@@ -30,7 +15,7 @@ linkedList* init_ll() {
 }
 
 unsigned int pow_int(int a, int b) {
-    int res = 1;
+    unsigned int res = 1;
     while (b>0) { res = res * a; b--; }
     return res;
 }
@@ -56,7 +41,7 @@ unsigned int get_num_from_ll(linkedList* dummy, int digits) {
     linkedList* current_node = dummy->next;
     do {
         int val = current_node->val;
-        printf("v=%d\n", val);
+        // printf("v=%d\n", val);
         res += (val * pow_int(10, digits-1));
         current_node = current_node->next;
         digits--;
@@ -64,6 +49,16 @@ unsigned int get_num_from_ll(linkedList* dummy, int digits) {
 
     return res;
     // printf("res=%d\n", res);
+}
+
+void free_linkedList(linkedList* ll) {
+    linkedList* next_node = ll->next;
+    free(ll);
+    while (next_node) {
+        ll = next_node;
+        next_node = ll->next;
+        free(ll);
+    }
 }
 
 int myAtoi(char* s) {
@@ -77,9 +72,19 @@ int myAtoi(char* s) {
     short digits = 0;
     linkedList* ll = init_ll();
 
+
+    if (digits>10 || (digits==10 && (ll->next)->val>=4)) {    // if out of bounds
+        free_linkedList(ll);
+        if (is_signed) {
+            return INT32_MIN;
+        } else {
+            return INT32_MAX;
+        }
+    }
+
     for (size_t i = 0; i < s_len; i++) {
         char c = s[i];
-        printf("c=%c\n",c);
+        // printf("c=%c\n",c);
 
         if (leading_zero) {
             if (c=='0') {
@@ -124,30 +129,35 @@ int myAtoi(char* s) {
                 break;
             }
         }
-        PRINT_STATE();
+        // PRINT_STATE();
     }
     // INT32_MAX
     if (digits) {
         if (digits>10 || (digits==10 && (ll->next)->val>=4)) {    // if out of bounds
+            free_linkedList(ll);
             if (is_signed) {
                 return INT32_MIN;
             } else {
                 return INT32_MAX;
             }
-        } else if (!is_signed) {
+        } else if (digits && !is_signed) {
             if (get_num_from_ll(ll, digits) > INT32_MAX) { 
+                free_linkedList(ll);
                 return INT32_MAX;
             }
-        } else if (is_signed) {
+        } else if (digits && is_signed) {
             if (get_num_from_ll(ll, digits)-1 > INT32_MAX) { 
+                free_linkedList(ll);
                 return INT32_MIN;
             }
         }
 
         int res = get_num_from_ll(ll, digits);
         if (is_signed) return -(unsigned int)res;
+        free_linkedList(ll);
         return res;
     }
+    free_linkedList(ll);
     return 0;
 }
 
@@ -169,7 +179,8 @@ int main(int argc, char const *argv[]) {
     // printf("<space>=%d",' ');
     // char* s = " -003-4-1";
     // char* s = "-98799999999999999999999";
-    char* s = "-2147483648";
+    // char* s = "-2147483648";
+    char* s = "-91283472332";
     int res = myAtoi(s);
     printf("res=%d\n", res);
 
