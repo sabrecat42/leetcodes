@@ -35,7 +35,10 @@ bool match_recursive(char* str, char* reg) {
     } else if (reg[1] == '*') {                 // when star
         printf("    when star\n");
         if (reg[0]=='.') {                              // when wildcard
-            if (r_len==2 && s_len==1) return true;
+            if (r_len==2) {
+                printf("        .* is last regex elem\n");
+                return true;
+            }
             // case when zero chars -> same char 
 
             // for (size_t s_i = 0; s_i < s_len; s_i++) {
@@ -44,18 +47,28 @@ bool match_recursive(char* str, char* reg) {
             //     if (s_i == s_len-1) return true;
             //     if (s_i==s_len-1 && match_recursive((str+s_i), reg+2)) return true;
             // }
-
+            // when all future regex elements are also .*
+            
+            // when all future regex elements are also .*
+            if (s_len/2==0) {
+                for (size_t i = 0; i < s_len/2; i++) {
+                    if (reg[i*2]!='.' || reg[i*2+1]!='*') {
+                        break;
+                    }
+                }
+                return true;
+            }
             for (size_t s_i = 0; s_i < s_len; s_i++) {
                 printf("str=%s; regex=%s\n", (str+s_i), reg+2);
-                if (s_i>0 && str[s_i]!=str[s_i-1]) {
-                    printf("star & wild card -> will break\n");
-                    if (match_recursive((str+s_i),reg+2)) return true;
-                    break;
-                }
-                if (s_i == s_len-1) {
-                    printf("star and wilcrad matched till last char.\n");
-                    return true;
-                }
+                // if (s_i>0 && str[s_i]!=str[s_i-1]) {
+                //     printf("star & wild card -> will break\n");
+                //     if (match_recursive((str+s_i),reg+2)) return true;
+                //     break;
+                // }
+                // if (s_i == s_len-1) {
+                //     printf("star and wilcrad matched till last char.\n");
+                //     return true;
+                // }
                 printf("will do check on str+s_i=%s and reg+2=%s\n\n", (str+s_i), reg+2);
                 if (match_recursive((str+s_i), reg+2)) return true;
             }
@@ -82,17 +95,17 @@ bool match_recursive(char* str, char* reg) {
     } else {                                    // when no star
         printf("No star\n");
         if (reg[0]=='.') {                              // when wildcard
-            printf("W. wildcard\n");
-            if (s_len==0 || s_len==1) {
+            printf("    W. wildcard\n");
+            if ((r_len==1) && (s_len==0 || s_len==1)) {
                 return true;
             } else {
                 if (match_recursive(str, reg+1)) return true;
                 if (s_len>1 && match_recursive(str+1, reg+1)) return true;
             }
         } else {                                        // when no wildcard
-            printf("No wildcard\n");
+            printf("    No wildcard\n");
             if (reg[0] == str[0]) {
-                if (s_len==1 && s_len==1) {
+                if (s_len==1 && r_len==1) {
                     return true;
                 } else if (s_len>1 && r_len>1) {
                     printf("will match_rec for str+1=%s, reg+1=%s\n",str+1, reg+1);
@@ -103,8 +116,6 @@ bool match_recursive(char* str, char* reg) {
             }
         }
     }
-
-
     printf("returning false\n\n");
     return false;
 }
@@ -123,14 +134,18 @@ bool isMatch(char* s, char* p) {
     // if (regex[r_i+1] == )
 
 int main() {
-    // char* str= "aaabc";
+    // char* str= "aaabc";  // match
     // char* regex= ".*bc";
-    // char* str= "aa";
+    // char* str= "aa";     //not match
     // char* regex= "a";
-    // char* str= "aa";
+    // char* str= "aa";     // match
     // char* regex= "a*";
-    char* str= "ab";
-    char* regex= ".*";
+    // char* str= "ab";     // match
+    // char* regex= ".*";
+    // char* str= "abbcc";     // not match
+    // char* regex= ".*bc";
+    char* str= "sjskjfsadlfsadfsfffjlaskjdjflkajs";     // not match
+    char* regex= ".*skj......sad..ff*jla.*..kajs";
     
     if (isMatch(str,regex)) {
         printf("is match");
