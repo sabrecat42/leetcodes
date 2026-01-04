@@ -19,6 +19,12 @@ bool isMatch(char* s, char* p) {
     //     printf("    again: checking for str=%s, reg=%s\n",str,reg);
     // }
 
+    if (r_len>=2 && s_len==0 && reg[1]=='*') {
+        if (isMatch((str),reg+2)) {
+            return true;
+        }
+    }
+
     if (r_len==0 && s_len==0) {
         printf("empty reg and str -> true\n");
         return true;
@@ -64,7 +70,7 @@ bool isMatch(char* s, char* p) {
             //     }
             //     return true;
             // }
-            for (size_t s_i = 0; s_i < s_len; s_i++) {
+            for (size_t s_i = 0; s_i <= s_len; s_i++) {
                 printf("str=%s; regex=%s\n", (str+s_i), reg+2);
                 // if (s_i>0 && str[s_i]!=str[s_i-1]) {
                 //     printf("star & wild card -> will break\n");
@@ -78,22 +84,33 @@ bool isMatch(char* s, char* p) {
                 printf("will do check on str+s_i=%s and reg+2=%s\n\n", (str+s_i), reg+2);
                 if (isMatch((str+s_i), reg+2)) return true;
             }
+
         } else if (reg[0] != '.') {                     // non-wildcard
             printf("        non-wildcard\n");
             if (r_len==2 && s_len==1 && str[0] == reg[0]) return true;
             // TODO: count until what index str matches .*, and then isMatch from largest str+i to smallest => more efficient
-            for (size_t s_i = 0; s_i < s_len; s_i++) {
-                if (s_i==0 && !(str[0] == reg[0])) {
-                    if (isMatch((str),reg+2)) return true;
-                    break;
+            for (size_t s_i = 0; s_i <= s_len; s_i++) {
+                if (s_i==0) {
+                    if (str[0] == reg[0]) {
+                        printf("star -> no-wildcard -> s_i==0 and (str[0] == reg[0]);\n");
+                        if (isMatch((str),reg+2) || (s_len>1 && isMatch((str+1),reg+2))) {
+                            return true;
+                        }
+                    } else {
+                        printf("star -> no-wildcard -> s_i==0 and !(str[0] == reg[0]);\n");
+                        if (isMatch((str),reg+2)) {
+                            return true;
+                        }
+                        break;
+                    }
                 }
                 if (s_i>0 && str[s_i]!=str[s_i-1]) {
                     printf("star & non-wild card -> will break\n");
                     if (isMatch((str+s_i),reg+2)) return true;
                     break;
                 }
-                if (s_i == s_len-1) {
-                    printf("star and non-wilcrad matched till last char.\n");
+                if (r_len==2 && s_i == s_len-1) {
+                    printf("str=%s; reg=%s -> star and non-wilcrad matched till last char.\n",str,reg);
                     return true;
                 }
                 if (isMatch((str+s_i), reg+2)) return true;
@@ -158,8 +175,14 @@ int main() {
     // char* regex= "ab*";
     // char* str= "a";     // false 
     // char* regex= ".*..a*";
-    char* str= "a";     // false
-    char* regex= ".*..";
+    // char* str= "a";     // false
+    // char* regex= ".*..";
+    // char* str= "acaabbaccbbacaabbbb";     // false
+    // char* regex= "a*.*b*.*a*aa*a*";
+    // char* str= "aabcbcbcaccbcaabc";     // true
+    // char* regex= ".*a*aa*.*b*.c*.*a*";
+    char* str= "abbabaaaaaaacaa";     // true
+    char* regex= "a*.*b.a.*c*b*a*c*";
     
     if (isMatch(str,regex)) {
         printf("is match");
