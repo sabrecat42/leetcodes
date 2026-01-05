@@ -2,13 +2,25 @@ package main
 
 import "fmt"
 
+// func twoSum(nums []int, target int) []int {
+// 	for i := 0; i < len(nums); i++ {
+// 		for j := i + 1; j < len(nums); j++ {
+// 			if nums[i]+nums[j] == target {
+// 				return []int{i, j}
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
+
 func twoSum(nums []int, target int) []int {
+	var compl_map = make(map[int]int)
 	for i := 0; i < len(nums); i++ {
-		for j := i + 1; j < len(nums); j++ {
-			if nums[i]+nums[j] == target {
-				return []int{i, j}
-			}
+		j, ok := compl_map[nums[i]]
+		if ok {
+			return []int{i, j}
 		}
+		compl_map[target-nums[i]] = i
 	}
 	return nil
 }
