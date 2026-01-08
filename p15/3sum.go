@@ -1,68 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"slices"
 )
 
-// func factorial(n int) (res int) {
-// 	res = 1
-// 	// if n == 0 || n == 1 {
-// 	// 	return
-// 	// }
-// 	for i := n; i > 0; i-- {
-// 		res *= i
-// 	}
-// 	return
-// }
-
-// func combinations(n, k int) int {
-// 	return factorial(n) / (factorial(k) * factorial(n-k))
-// }
-
 type idxPair struct {
-	idx  []int
-	pair []int
+	idx  [3]int
+	pair [3]int
 }
 
 func threeSum(nums []int) (finalTriplets [][]int) {
-	// finalPairs := [][]int{}
-
 	len_nums := len(nums)
-	// get list of unique nums
-	// numsMap := make(map[int]bool)
-	// for i := range len_nums {
-	// 	numsMap[nums[i]] = true
-	// }
-	// nums = make([]int, 0, len(numsMap))
-	// for k := range numsMap {
-	// 	nums = append(nums, k)
-	// }
-
-	// len_nums = len(nums)
-	// diffPairsMap := [][2]int{}
 	diffPairsMap := make(map[int][]idxPair)
 	for i := 0; i < len_nums-1; i++ {
 		for j := i + 1; j < len_nums; j++ {
-			// if sum := (-nums[i]) - nums[j]; sum == nums[i] || sum == nums[j] {
-			// 	fmt.Printf("skipping [%d,%d]\n", nums[i], nums[j])
-			// }
-
-			// if pairs[[2]int{nums[i], nums[j]}] != nil || pairs[[2]int{nums[j], nums[i]}] != nil {
-			// 	// pairs[[2]int{nums[i], nums[j]}] =
-			// }
 			diffZero := (-nums[i]) - nums[j]
 			// sort pair
 			var pair idxPair
 			if nums[i] < nums[j] {
-				pair = idxPair{idx: []int{i, j}, pair: []int{nums[i], nums[j]}}
+				pair = idxPair{idx: [3]int{i, j}, pair: [3]int{nums[i], nums[j]}}
 			} else {
-				pair = idxPair{idx: []int{j, i}, pair: []int{nums[j], nums[i]}}
+				pair = idxPair{idx: [3]int{j, i}, pair: [3]int{nums[j], nums[i]}}
 			}
 			if diffPairsMap[diffZero] != nil {
 				alreadyPresent := false
 				for _, v := range diffPairsMap[diffZero] {
-					if slices.Equal(v.pair, pair.pair) {
+					if v.pair[0] == pair.pair[0] && v.pair[1] == pair.pair[1] {
 						alreadyPresent = true
 					}
 				}
@@ -86,20 +49,8 @@ func threeSum(nums []int) (finalTriplets [][]int) {
 			// fmt.Println("Detected for", nums[i], "in map with", diffPairsMap[nums[i]])
 			for _, iPair := range diffPairsMap[nums[i]] {
 				if i != iPair.idx[0] && i != iPair.idx[1] {
-					current_triplet := [3]int{}
-					if nums[i] < iPair.pair[0] {
-						current_triplet[0] = nums[i]
-						current_triplet[1] = iPair.pair[0]
-						current_triplet[2] = iPair.pair[1]
-					} else if nums[i] >= iPair.pair[0] && nums[i] <= iPair.pair[1] {
-						current_triplet[0] = iPair.pair[0]
-						current_triplet[1] = nums[i]
-						current_triplet[2] = iPair.pair[1]
-					} else if nums[i] >= iPair.pair[1] {
-						current_triplet[0] = iPair.pair[0]
-						current_triplet[1] = iPair.pair[1]
-						current_triplet[2] = nums[i]
-					}
+					current_triplet := []int{iPair.pair[0], iPair.pair[1], nums[i]}
+					slices.Sort(current_triplet)
 					isUnique := true
 					for _, triplet := range finalTriplets {
 						if current_triplet[0] == triplet[0] &&
@@ -119,39 +70,11 @@ func threeSum(nums []int) (finalTriplets [][]int) {
 		}
 	}
 
-	// TODO for all pairs that have the same set of idxs -> remove
-
-	fmt.Println("")
-	fmt.Println("#triplets=", len(finalTriplets))
-	fmt.Println("final triplets:", finalTriplets)
-	// uniquePairs := [][]int{}
-	// copy(uniquePairs, finalPairs)
-	// idxToDelete := []int{}
-	// for i := 0; i < len(finalPairs)-1; i++ {
-	// 	for j := i; j < len(finalPairs); j++ {
-	// 		if (finalPairs[i][0] == finalPairs[j][0] &&
-	// 			finalPairs[i][1] == finalPairs[j][1] &&
-	// 			finalPairs[i][2] == finalPairs[j][2]) || (finalPairs[i][0] == finalPairs[j][1] &&
-	// 			finalPairs[i][1] == finalPairs[j][2] &&
-	// 			finalPairs[i][2] == finalPairs[j][0]) || (finalPairs[i][0] == finalPairs[j][2] &&
-	// 			finalPairs[i][1] == finalPairs[j][0] &&
-	// 			finalPairs[i][2] == finalPairs[j][2]) {
-	// 			idxToDelete = append(idxToDelete, i)
-	// 		}
-	// 	}
-	// }
-
-	// j := 0
-	// for i := 0; i < len(idxToDelete); i++ {
-	// 	finalPairs = append(finalPairs[:i-j], finalPairs[(i+1-j):])
-	// 	j++
-	// }
+	// fmt.Println("")
+	// fmt.Println("#triplets=", len(finalTriplets))
+	// fmt.Println("final triplets:", finalTriplets)
 
 	return
-
-	// for i := range len(nums) {
-	// 	pairs[]
-	// }
 }
 
 func main() {
