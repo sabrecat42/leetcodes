@@ -38,14 +38,15 @@ func threeSumClosest(nums []int, target int) (final_sum int) {
 			continue
 		}
 		m, n := i+1, len_nums-1
-		last_sum := nums[i] + nums[m] + nums[n]
+		// best_sum := nums[i] + nums[m] + nums[n]
+		best_sum := final_sum
 		for {
 			// fmt.Println("m=", m, "n=", n, "num_m=", nums[m], "num_n=", nums[n])
 			if m >= n {
 				// fmt.Println("m>=n -> break")
-				if abs(last_sum-target) < abs(final_sum-target) {
+				if abs(best_sum-target) < abs(final_sum-target) {
 					// fmt.Println("New final_sum=", final_sum)
-					final_sum = last_sum
+					final_sum = best_sum
 				}
 				break
 			}
@@ -65,18 +66,20 @@ func threeSumClosest(nums []int, target int) (final_sum int) {
 			// fmt.Println("sum =", sum, "diffSumTarget=", diffSumTarget)
 			// TODO fix below
 			// past this point diff of sum from target will only grow -> break out
-			if abs(sum-target) > abs(last_sum-target) {
+			if abs(sum-target) < abs(best_sum-target) {
 				// fmt.Println("diff of sum from target will only grow -> break out")
-				if abs(last_sum-target) < abs(final_sum-target) {
-					fmt.Println("")
-					fmt.Println("i=", i, "num_i=", nums[i])
-					fmt.Println("m=", m, "n=", n, "num_m=", nums[m], "num_n=", nums[n])
-					fmt.Println("last_sum =", last_sum, "difflastsumtarget=", last_sum-target)
-					fmt.Println("sum =", sum, "diffSumTarget=", diffSumTarget)
-					final_sum = last_sum
-					fmt.Println("New final_sum=", final_sum)
-				}
-				break
+				// if abs(best_sum-target) < abs(final_sum-target) {
+				// 	fmt.Println("")
+				// 	fmt.Println("i=", i, "num_i=", nums[i])
+				// 	fmt.Println("m=", m, "n=", n, "num_m=", nums[m], "num_n=", nums[n])
+				// 	fmt.Println("last_sum =", best_sum, "difflastsumtarget=", best_sum-target)
+				// 	fmt.Println("sum =", sum, "diffSumTarget=", diffSumTarget)
+				// 	final_sum = best_sum
+				// 	fmt.Println("New final_sum=", final_sum)
+				// }
+				// break
+
+				best_sum = sum
 			}
 			if diffSumTarget < 0 {
 				// fmt.Println("sum-target to small -> m++")
@@ -89,7 +92,7 @@ func threeSumClosest(nums []int, target int) (final_sum int) {
 				// fmt.Println("numbers at idx", i, m, n, "sum exactly to target")
 				return
 			}
-			last_sum = sum
+			// best_sum = sum
 		}
 	}
 	// fmt.Println(len(finalTriplets))
@@ -105,7 +108,7 @@ func main() {
 
 	// threeSum(list)
 	fmt.Println(threeSumClosest(list, -2805))
-	fmt.Println(list[3])
-	fmt.Println(list[5])
-	fmt.Println(list[10])
+	// fmt.Println(list[3])
+	// fmt.Println(list[5])
+	// fmt.Println(list[10])
 }
