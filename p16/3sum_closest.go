@@ -20,6 +20,16 @@ func threeSumClosest(nums []int, target int) (best_sum int) {
 	// fmt.Println("nums=", nums)
 	// fmt.Println("target=", target)
 	for i := 0; i < len_nums-2; i++ {
+		// optimization
+		max_val := (nums[i] + nums[len_nums-2] + nums[len_nums-1])
+		min_val := (nums[i] + nums[i+1] + nums[i+2])
+		if min_val > target && abs(target-min_val) >= abs(target-best_sum) {
+			break
+		}
+		if max_val < target && abs(target-max_val) >= abs(target-best_sum) {
+			continue
+		}
+
 		// fmt.Printf("\n\n")
 		// fmt.Println("Current final_sum=", final_sum)
 		// fmt.Println("i=", i, "num_i=", nums[i])
@@ -30,6 +40,7 @@ func threeSumClosest(nums []int, target int) (best_sum int) {
 		}
 		m, n := i+1, len_nums-1
 		for {
+
 			// fmt.Println("m=", m, "n=", n, "num_m=", nums[m], "num_n=", nums[n])
 			if m >= n {
 				// fmt.Println("m>=n -> break")
