@@ -2,38 +2,46 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
-// 1:
-// 		()
-// 2:
-//		(()), ()()
-// 3:
-//		((())), (()()), (())(), ()(()), ()()()
+// recursive method. start from list of previous smaller n combinations.
+// for each larger n: for range i to n start with "(" then move the ")" tp right by i (so with each iteration a larger amount of pairs of parantheses fit within "(...)" and fewer after the ")...").
+// for all combos that fit between the braces "(...)" combine with all possible combos that fit after the ")..."
 
-func recGenParaenth(n int, prevParenthCombos []string) []string {
-	currentParenthCombos := make([]string, 0, len(prevParenthCombos)-1)
-	for _, parenthCombo := range prevParenthCombos {
-		currentParenthCombos = append(currentParenthCombos, ("(" + parenthCombo + ")"))
-		currentParenthCombos = append(currentParenthCombos, ("()" + parenthCombo))
-		if strings.ReplaceAll(parenthCombo, "()", "") != "" {
-			currentParenthCombos = append(currentParenthCombos, (parenthCombo + "()"))
+func recGenParaenth(n int, prevParenthCombos [][]string) []string {
+	currentParenthCombos := make(map[string]bool)
+	// fmt.Println("")
+	// fmt.Println("working with:", len(prevParenthCombos))
+	for i := 0; i < len(prevParenthCombos); i++ {
+		// fmt.Println("i=", i)
+		for _, prevLeftCombo := range prevParenthCombos[i] {
+			leftPart := "(" + prevLeftCombo + ")"
+			// fmt.Println("left part=", leftPart)
+			for _, prevRightCombo := range prevParenthCombos[len(prevParenthCombos)-1-i] {
+				// fmt.Println("right part=", prevRightCombo)
+				currentCombo := leftPart + prevRightCombo
+				// fmt.Println("final=", currentCombo)
+				currentParenthCombos[currentCombo] = true
+			}
 		}
 	}
-	prevParenthCombos = nil
-	if n == 1 {
-		return currentParenthCombos
+	currentParenthList := []string{}
+	for k := range currentParenthCombos {
+		currentParenthList = append(currentParenthList, k)
 	}
-	return recGenParaenth(n-1, currentParenthCombos)
+	if len(prevParenthCombos) == n {
+		return currentParenthList
+	}
+	prevParenthCombos = append(prevParenthCombos, currentParenthList)
+	return recGenParaenth(n, prevParenthCombos)
 }
 
 func generateParenthesis(n int) []string {
-	parenthCombos := []string{"()"}
 	if n == 1 {
-		return parenthCombos
+		return []string{"()"}
 	}
-	return recGenParaenth(n-1, parenthCombos)
+	parenthCombos := [][]string{{""}, {"()"}}
+	return recGenParaenth(n, parenthCombos)
 }
 
 func main() {
